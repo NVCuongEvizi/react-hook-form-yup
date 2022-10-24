@@ -9,7 +9,6 @@ const ProtectedRoute = ({ children, ...rest }: any) => {
   } catch (error) {
     localStorage.removeItem("user");
   }
-  console.log("user", user);
 
   return (
     <Route

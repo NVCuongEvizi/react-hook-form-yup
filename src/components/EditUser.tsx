@@ -1,12 +1,31 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import FormContainer from "../styles/Form.css";
-import { v4 as uuidv4 } from "uuid";
-import { Link } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { schema } from "../common/schema";
 import { IFormUserInput } from "../common/IFormInput";
 
-const AddUser = () => {
+const EditUser = () => {
+  // get userData list
+  const history = useHistory();
+
+  let userData: any = localStorage.getItem("userData");
+  try {
+    if (userData) {
+      userData = JSON.parse(userData);
+    }
+  } catch (error) {
+    localStorage.removeItem("userData");
+  }
+  // get edit user
+  const params: any = useParams();
+  let editUser = userData.filter((item: any) => {
+    item = JSON.parse(item);
+    return item.id === params.id;
+  });
+  editUser = JSON.parse(editUser[0]);
+  // console.log("edituser", editUser);
+
   const {
     register,
     reset,
@@ -15,11 +34,27 @@ const AddUser = () => {
     formState: { errors },
   } = useForm<IFormUserInput>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      username: editUser.username,
+      age: editUser?.age,
+      gender: editUser.gender === true ? 1 : 0,
+      country: editUser.country,
+      otherCountry: editUser?.otherCountry,
+      projectName: editUser.project[0].name,
+      projectSize: editUser.project[0].size,
+      projectRole: editUser.project[0].role,
+      projectPosition: editUser.project[0]?.position,
+    },
   });
 
   const onSubmit: SubmitHandler<IFormUserInput> = (data) => {
+    let role = data.projectRole;
+    if (size <= 5 && (role === "Dev Lead" || role === "QA Lead")) {
+      role = "Dev";
+    }
+
     const formData = {
-      id: uuidv4(),
+      id: params.id,
       username: data.username,
       age: data.age,
       gender: data.gender,
@@ -29,27 +64,24 @@ const AddUser = () => {
         {
           name: data.projectName,
           size: data.projectSize,
-          role: data.projectRole,
+          role: role,
           position: data.projectPosition,
         },
       ],
     };
-    console.log("form data:", formData);
-    try {
-      let userData: any = localStorage.getItem("userData");
-      if (userData) {
-        userData = JSON.parse(userData);
-        userData.push(JSON.stringify(formData));
-      } else {
-        userData = [];
-        userData.push(JSON.stringify(formData));
+    // console.log("form data:", formData);
+    // console.log("userData", userData);
+    const newUserData = userData.map((item: any, index: number) => {
+      item = JSON.parse(item);
+      if (item.id === params.id) {
+        item = formData;
       }
-      localStorage.setItem("userData", JSON.stringify(userData));
-    } catch (error) {
-      localStorage.removeItem("userData");
-    }
-    // reset data
-    reset();
+      item = JSON.stringify(item);
+      return item;
+    });
+    // console.log("new userData edited", JSON.stringify(newUserData));
+    localStorage.setItem("userData", JSON.stringify(newUserData));
+    history.push("/user");
   };
 
   const country = watch("country");
@@ -57,7 +89,7 @@ const AddUser = () => {
 
   return (
     <FormContainer>
-      <h1>Add User Page</h1>
+      <h1>Edit User Page</h1>
       <Link to="/user">Back to User Page</Link>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="username">UserName</label>
@@ -121,10 +153,10 @@ const AddUser = () => {
         )}
         <p className="error-container">{errors.projectPosition?.message}</p>
 
-        <button type="submit">Submit</button>
+        <button type="submit">Update</button>
       </form>
     </FormContainer>
   );
 };
 
-export default AddUser;
+export default EditUser;

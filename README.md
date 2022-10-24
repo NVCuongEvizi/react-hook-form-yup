@@ -1,6 +1,11 @@
 - validation with Yup:
   @hookform/resolvers yup
-- install react-router-dom in TS, add with @types/react-router-dom
+- # install react-router-dom in TS, add with @types/react-router-dom
+- Age is not required but can not summit => transform to undefined if the default value is empty string [fixed]
+- Yup will overide validate of default input form [ok]
+- Role cannot change from QA Lead (size >= 6) to Dev (size < 6>) [fixed] -> reset()
+- Age, Project Size does not reset by undefined
+- Edit Page: If do not select option Project Role -> it will get default value
 
 ===========================================
 

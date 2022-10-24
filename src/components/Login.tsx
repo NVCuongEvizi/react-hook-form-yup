@@ -2,9 +2,10 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useHistory } from "react-router-dom";
+import FormContainer from "../styles/Form.css";
 
 interface IFormInput {
-  name: string;
+  username: string;
   password: string;
 }
 
@@ -13,7 +14,7 @@ const Login = () => {
 
   const schema = yup
     .object({
-      name: yup.string().required("Name is required"),
+      username: yup.string().required("Name is required"),
       password: yup
         .string()
         .required("Password is required")
@@ -33,22 +34,23 @@ const Login = () => {
   });
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log("data submit", data);
-    localStorage.setItem("user", JSON.stringify(data.name));
+    // console.log("login...");
+    localStorage.setItem("user", JSON.stringify(data.username));
     history.push("/user");
   };
 
   return (
-    <div>
+    <FormContainer>
       <h1>Login</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <label htmlFor="name">Name:</label>
+        <label htmlFor="username">User Name:</label>
         <input
-          id="name"
-          placeholder="Enter your name..."
-          {...register("name")}
+          id="username"
+          placeholder="Enter your user name..."
+          {...register("username")}
         />
-        <p>{errors.name?.message}</p>
+        <p className="error-container">{errors.username?.message}</p>
+
         <label htmlFor="password">Password:</label>
         <input
           id="password"
@@ -56,10 +58,11 @@ const Login = () => {
           placeholder="Enter your password..."
           {...register("password")}
         />
-        <p>{errors.password?.message}</p>
+        <p className="error-container">{errors.password?.message}</p>
+
         <button type="submit">Login</button>
       </form>
-    </div>
+    </FormContainer>
   );
 };
 
