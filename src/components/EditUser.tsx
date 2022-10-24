@@ -28,7 +28,6 @@ const EditUser = () => {
 
   const {
     register,
-    reset,
     handleSubmit,
     watch,
     formState: { errors },
