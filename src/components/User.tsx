@@ -29,6 +29,9 @@ const User = () => {
   return (
     <UserTableContainer>
       <h1>Welcome {user}</h1>
+      <Link className="mx-3" to="/firebase">
+        Firebase
+      </Link>
       <Link to="/user/add">Add User</Link>
       <button onClick={handleLogout}>Logout</button>
       <button onClick={() => localStorage.removeItem("userData")}>

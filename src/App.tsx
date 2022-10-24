@@ -4,6 +4,7 @@ import EditUser from "./components/EditUser";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import User from "./components/User";
+import FireBase from "./components/FireBase";
 
 const App = () => {
   return (
@@ -11,6 +12,9 @@ const App = () => {
       <Switch>
         <Route exact path="/login">
           <Login />
+        </Route>
+        <Route exact path="/firebase">
+          <FireBase />
         </Route>
         <ProtectedRoute exact path="/user/add">
           <AddUser />
