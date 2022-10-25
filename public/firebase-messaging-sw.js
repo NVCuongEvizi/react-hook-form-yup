@@ -1,35 +1,24 @@
-import firebase from "firebase/compat/app"; //v9
+importScripts("https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js");
+importScripts("https://www.gstatic.com/firebasejs/8.2.0/firebase-messaging.js");
 
-// Scripts for firebase and firebase messaging
-importScripts(
-  "https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"
-);
-importScripts(
-  "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"
-);
+self.addEventListener("fetch", () => {
+  const urlParams = new URLSearchParams(location.search);
+  self.firebaseConfig = Object.fromEntries(urlParams);
+});
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCRK60kracDt0pJYVtXLRrEd_HtNpqMrKA",
-  authDomain: "cloud-message-firebase-a983f.firebaseapp.com",
-  projectId: "cloud-message-firebase-a983f",
-  storageBucket: "cloud-message-firebase-a983f.appspot.com",
-  messagingSenderId: "904980663208",
-  appId: "1:904980663208:web:ce034e92d8662706fe2b9d",
-  measurementId: "G-2V09G0S94N",
+const defaultConfig = {
+  apiKey: true,
+  projectId: true,
+  messagingSenderId: true,
+  appId: true,
 };
 
-firebase.initializeApp(firebaseConfig);
-
-// Retrieve firebase messaging
-const messaging = firebase.messaging();
-
-messaging.onBackgroundMessage(function (payload) {
-  console.log("Received background message ", payload);
-
-  const notificationTitle = payload?.notification?.title;
-  const notificationOptions = {
-    body: payload.notification?.body,
-  };
-
-  self.registration.showNotification(notificationTitle, notificationOptions);
-});
+firebase.initializeApp(self.firebaseConfig || defaultConfig);
+if (firebase.messaging.isSupported()) {
+  const messaging = firebase.messaging();
+  // const channel = new BroadcastChannel('notifications');
+  messaging.onBackgroundMessage(function (payload) {
+    //can not console.log here
+    // channel.postMessage(payload);
+  });
+}

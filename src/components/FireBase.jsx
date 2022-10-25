@@ -1,4 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useEffect } from "react";
 import { useState } from "react";
 import { Button, Toast } from "react-bootstrap";
 import { getTokenFunc, onMessageListener } from "../firebase/firebase";
@@ -8,18 +9,22 @@ const FireBase = () => {
   const [notification, setNotification] = useState({ title: "", body: "" });
   const [isTokenFound, setTokenFound] = useState(false);
 
-  getTokenFunc(setTokenFound);
+  useEffect(() => {
+    getTokenFunc(setTokenFound);
+  }, []);
 
-  onMessageListener()
-    .then((payload) => {
-      console.log("payload at FireBase.tsx", payload);
-      setShow(true);
-      setNotification({
-        title: payload.notification.title,
-        body: payload.notification.body,
-      });
-    })
-    .catch((err) => console.log("failed: ", err));
+  useEffect(() => {
+    onMessageListener()
+      .then((payload) => {
+        console.log("payload at FireBase.tsx", payload);
+        setShow(true);
+        setNotification({
+          title: payload.notification.title,
+          body: payload.notification.body,
+        });
+      })
+      .catch((err) => console.log("failed: ", err));
+  });
 
   return (
     <div>
